@@ -34,7 +34,7 @@ export default function App() {
     setResults([]);
 
     try {
-      const response = await axios.post("https://28cc843b1149.ngrok-free.app", {
+      const response = await axios.post("https://28cc843b1149.ngrok-free.app/recommend", {
         query,
         k: 10,
         remote_preferred: remote,
