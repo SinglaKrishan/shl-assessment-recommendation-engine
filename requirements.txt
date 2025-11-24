@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+playwright
+beautifulsoup4
+pydantic
+requests
+pandas
+sentence-transformers
+chromadb
+python-dotenv
