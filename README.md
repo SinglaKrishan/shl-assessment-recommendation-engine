@@ -33,30 +33,24 @@ the system must:
 ## 🧠 System Architecture
 ```mermaid
 flowchart LR
-    %% ====== OFFLINE PIPELINE ======
     subgraph OFFLINE["Offline Data & Embedding Pipeline"]
-        A1[Playwright + BeautifulSoup Scraper\n(scrape_shl_catalog.py)] --> A2[catalog_raw.json\n(Individual Test Solutions)]
-        A2 --> A3[Detail Scraper\n(scrape_details.py)]
-        A3 --> A4[catalog_full.json\n(+ descriptions, job levels)]
-        A4 --> A5[Embedding Generator\n(create_embeddings.py)]
-        A5 --> A6[Chroma Vector DB\n(collection: shl_products)]
+        A1[Playwright + BeautifulSoup Scraper (scrape_shl_catalog.py)] --> A2[catalog_raw.json (Individual Test Solutions)]
+        A2 --> A3[Detail Scraper (scrape_details.py)]
+        A3 --> A4[catalog_full.json (+ descriptions, job levels)]
+        A4 --> A5[Embedding Generator (create_embeddings.py)]
+        A5 --> A6[Chroma Vector DB (collection: shl_products)]
     end
 
-    %% ====== ONLINE RECOMMENDATION FLOW ======
     subgraph ONLINE["Online Recommendation System"]
-        U[User in Browser] --> FE[React + Vite + Tailwind UI\n(Dark/Light mode, filters)]
-        FE -->|POST /recommend\nAxios| API[FastAPI Backend]
-
-        API -->|Encode query\n(all-MiniLM-L6-v2)| EMB[SentenceTransformer Model]
+        U[User in Browser] --> FE[React + Vite + Tailwind UI (Dark/Light mode, filters)]
+        FE -->|POST /recommend Axios| API[FastAPI Backend]
+        API -->|Encode query all-MiniLM-L6-v2| EMB[SentenceTransformer Model]
         EMB -->|Query embedding| VDB[ChromaDB Vector DB]
-
-        VDB -->|Top-N nearest neighbours| RANK[Reranking & Scoring Layer\nSemantic + metadata boosts]
+        VDB -->|Top-N neighbours| RANK[Reranking Layer (Semantic + BOOT scoring)]
         RANK -->|Top-K results| FE
-
         FE -->|View Details → SHL URL| U
     end
 
-    %% ====== SUBMISSION GENERATION ======
     subgraph EVAL["Evaluation"]
         DS[Gen_AI Dataset.xlsx] --> SUB[generate_submission.py]
         SUB --> CSV[submission.csv]
